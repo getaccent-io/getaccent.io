@@ -1,13 +1,50 @@
+import { mkdir, writeFile } from "node:fs/promises";
+import path from "node:path";
 import { NextResponse } from "next/server";
 import { assessPronunciation, azureConfigured } from "@/lib/azure/pronunciation";
 import { buildErrorProfile } from "@/lib/scoring/errorProfile";
 import { mockAzureAssessment } from "@/mocks/azureAssessment";
-import type { AssessmentResponse } from "@/types/assessment";
+import type {
+  AssessmentResponse,
+  AzureAssessmentResult,
+  ErrorProfile,
+} from "@/types/assessment";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
 const MAX_AUDIO_BYTES = 12 * 1024 * 1024; // ~6 min of 16kHz mono PCM
+
+// In dev, every real-Azure assessment is saved to notes/calibration/
+// (gitignored) so recordings accumulate into the corpus for tuning the
+// errorProfile thresholds. Mock results carry no calibration signal.
+async function captureForCalibration(
+  audio: Buffer,
+  referenceText: string,
+  azure: AzureAssessmentResult,
+  profile: ErrorProfile,
+): Promise<void> {
+  const dir = path.join(
+    process.cwd(),
+    "notes",
+    "calibration",
+    new Date().toISOString().replace(/[:.]/g, "-"),
+  );
+  await mkdir(dir, { recursive: true });
+  await Promise.all([
+    writeFile(path.join(dir, "recording.wav"), audio),
+    writeFile(path.join(dir, "azure.json"), JSON.stringify(azure, null, 2)),
+    writeFile(path.join(dir, "profile.json"), JSON.stringify(profile, null, 2)),
+    writeFile(
+      path.join(dir, "meta.json"),
+      JSON.stringify(
+        { capturedAt: new Date().toISOString(), referenceText, audioBytes: audio.length },
+        null,
+        2,
+      ),
+    ),
+  ]);
+}
 
 export async function POST(req: Request) {
   let form: FormData;
@@ -33,12 +70,25 @@ export async function POST(req: Request) {
     // Without Azure credentials the endpoint serves a deterministic mock so
     // the whole flow (and the UI) can be developed and demoed offline.
     const mode = azureConfigured() ? "azure" : "mock";
-    const azure =
-      mode === "azure"
-        ? await assessPronunciation(Buffer.from(await audio.arrayBuffer()), referenceText)
-        : mockAzureAssessment(referenceText);
+    let azure: AzureAssessmentResult;
+    let audioBuffer: Buffer | null = null;
+    if (mode === "azure") {
+      audioBuffer = Buffer.from(await audio.arrayBuffer());
+      azure = await assessPronunciation(audioBuffer, referenceText);
+    } else {
+      azure = mockAzureAssessment(referenceText);
+    }
+    const profile = buildErrorProfile(azure);
 
-    const body: AssessmentResponse = { mode, azure, profile: buildErrorProfile(azure) };
+    if (audioBuffer && process.env.NODE_ENV === "development") {
+      try {
+        await captureForCalibration(audioBuffer, referenceText, azure, profile);
+      } catch (err) {
+        console.warn("Calibration capture failed:", err);
+      }
+    }
+
+    const body: AssessmentResponse = { mode, azure, profile };
     return NextResponse.json(body);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Assessment failed";
