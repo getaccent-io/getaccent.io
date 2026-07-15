@@ -101,8 +101,12 @@ function findSyllableStructure(words: AzureWord[]): ErrorFinding {
     const ps = phonemeAccuracy(w);
     if (ps.length === 0) continue;
 
+    // If the final consonant closes a cluster, the cluster check owns it —
+    // counting it here too would turn one weak phoneme into two issues.
     const last = ps[ps.length - 1];
-    if (isConsonant(last.phoneme) && last.accuracy < PHONEME_WEAK) {
+    const beforeLast = ps.length >= 2 ? ps[ps.length - 2] : null;
+    const finalClosesCluster = beforeLast !== null && isConsonant(beforeLast.phoneme);
+    if (isConsonant(last.phoneme) && !finalClosesCluster && last.accuracy < PHONEME_WEAK) {
       issues.push({
         word: w.Word,
         kind: "final-consonant",
