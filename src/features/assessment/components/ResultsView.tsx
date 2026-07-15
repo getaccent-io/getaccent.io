@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { PHONEME_TO_TRACK, getTrack } from "@/constants/minimalPairs";
 import type { AssessmentResponse, ErrorFinding, WordResult } from "@/types/assessment";
 
 function scoreColor(accuracy: number | null): string {
@@ -44,21 +46,32 @@ function FindingDetails({ finding }: { finding: ErrorFinding }) {
   if (finding.id === "phoneme-production") {
     return (
       <ul className="mt-3 flex flex-wrap gap-2">
-        {finding.phonemes.map((p) => (
-          <li
-            key={p.phoneme}
-            className="rounded-lg bg-neutral-100 px-2.5 py-1.5 text-sm text-neutral-800"
-            title={`heard in: ${p.exampleWords.join(", ")}`}
-          >
-            <span className="font-mono font-semibold">/{p.phoneme}/</span>{" "}
-            <span className={scoreColor(p.avgAccuracy)}>{p.avgAccuracy}</span>
-            {p.koreanTypical && (
-              <span className="ml-1.5 rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-800">
-                common for Korean speakers
-              </span>
-            )}
-          </li>
-        ))}
+        {finding.phonemes.map((p) => {
+          const track = getTrack(PHONEME_TO_TRACK[p.phoneme] ?? "");
+          return (
+            <li
+              key={p.phoneme}
+              className="rounded-lg bg-neutral-100 px-2.5 py-1.5 text-sm text-neutral-800"
+              title={`heard in: ${p.exampleWords.join(", ")}`}
+            >
+              <span className="font-mono font-semibold">/{p.phoneme}/</span>{" "}
+              <span className={scoreColor(p.avgAccuracy)}>{p.avgAccuracy}</span>
+              {p.koreanTypical && (
+                <span className="ml-1.5 rounded bg-blue-100 px-1 py-0.5 text-[10px] font-medium text-blue-800">
+                  common for Korean speakers
+                </span>
+              )}
+              {track && (
+                <Link
+                  href={`/drills/listening/${track.id}`}
+                  className="ml-1.5 text-xs font-medium text-blue-700 underline underline-offset-2 hover:text-blue-900"
+                >
+                  train {track.label} →
+                </Link>
+              )}
+            </li>
+          );
+        })}
       </ul>
     );
   }
@@ -177,12 +190,20 @@ export function ResultsView({
         </p>
       </section>
 
-      <button
-        onClick={onRetry}
-        className="mx-auto rounded-full bg-neutral-900 px-8 py-3 font-medium text-white transition hover:bg-neutral-700"
-      >
-        Record again
-      </button>
+      <div className="mx-auto flex gap-3">
+        <button
+          onClick={onRetry}
+          className="rounded-full border border-neutral-300 px-8 py-3 font-medium text-neutral-700 transition hover:bg-neutral-100"
+        >
+          Record again
+        </button>
+        <Link
+          href="/drills"
+          className="rounded-full bg-neutral-900 px-8 py-3 font-medium text-white transition hover:bg-neutral-700"
+        >
+          Start ear training
+        </Link>
+      </div>
     </div>
   );
 }

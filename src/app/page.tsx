@@ -17,6 +17,12 @@ export default function HomePage() {
         Read your first paragraph
       </Link>
       <p className="text-xs text-neutral-400">~1 minute · microphone required</p>
+      <Link
+        href="/drills"
+        className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-800"
+      >
+        or go straight to ear training →
+      </Link>
     </main>
   );
 }

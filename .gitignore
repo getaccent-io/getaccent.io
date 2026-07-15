@@ -37,3 +37,6 @@ next-env.d.ts
 
 # internal notes (never pushed)
 /notes
+
+# claude code local permissions
+.claude/settings.local.json

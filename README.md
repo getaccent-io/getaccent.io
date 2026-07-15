@@ -19,7 +19,21 @@ to `.env.local` and fill in `AZURE_SPEECH_KEY` / `AZURE_SPEECH_REGION`
 In dev there's a "skip mic" link on the assess page that submits sample audio,
 so the whole flow can be exercised without a microphone.
 
-## Status — phase 1 (assessment flow) done
+## Status — phase 1 done, phase 2 started
+
+Phase 2 so far:
+
+- `/drills`: HVPT ear-training (listening) drills — 4 minimal-pair tracks
+  (R/L, F/P, V/B, TH/S), 10-trial sessions across 6 different voices,
+  progress + graduation (≥90% twice in a row) in localStorage for now.
+- Drill audio is pre-generated macOS TTS (`npm run gen:hvpt`) committed under
+  `public/audio/drills/hvpt/` — a placeholder with the same file layout
+  ElevenLabs audio will use later.
+- Assessment results link weak phonemes straight to the matching drill track.
+- `npm run smoke` synthesizes real speech, runs it through the full
+  assessment pipeline, and prints the profile — use it to verify Azure keys.
+
+Phase 1:
 
 - `/assess`: record the Rainbow Passage in-browser → 16 kHz mono WAV built
   client-side (no server ffmpeg) → Azure Pronunciation Assessment (phoneme
@@ -32,8 +46,8 @@ so the whole flow can be exercised without a microphone.
 - Results screen: overall scores, per-error findings with severity,
   word-by-word heatmap.
 
-Not built yet: auth/persistence, drills (HVPT, production, shadowing),
-coaching via Claude, TTS reference audio, payments.
+Not built yet: auth/persistence, speaking drills (production, shadowing),
+coaching via Claude, ElevenLabs TTS, payments.
 
 ## Layout
 

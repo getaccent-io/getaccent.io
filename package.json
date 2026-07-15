@@ -11,7 +11,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "smoke": "node scripts/azure-smoke.mjs",
+    "gen:hvpt": "node scripts/generate-hvpt-audio.mjs"
   },
   "dependencies": {
     "microsoft-cognitiveservices-speech-sdk": "^1.50.0",
