@@ -51,7 +51,14 @@ export function AssessmentFlow({ passage }: { passage: Passage }) {
   };
 
   if (phase === "results" && result) {
-    return <ResultsView result={result} passageTitle={passage.title} onRetry={startOver} />;
+    return (
+      <ResultsView
+        result={result}
+        passageTitle={passage.title}
+        audioUrl={recorder.audioUrl}
+        onRetry={startOver}
+      />
+    );
   }
 
   return (

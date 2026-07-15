@@ -107,10 +107,12 @@ function FindingDetails({ finding }: { finding: ErrorFinding }) {
 export function ResultsView({
   result,
   passageTitle,
+  audioUrl,
   onRetry,
 }: {
   result: AssessmentResponse;
   passageTitle: string;
+  audioUrl?: string | null;
   onRetry: () => void;
 }) {
   const { profile, mode } = result;
@@ -121,6 +123,15 @@ export function ResultsView({
         <p className="rounded-xl bg-blue-50 px-4 py-2.5 text-sm text-blue-800">
           Demo mode — no Azure key configured, so these are simulated results.
         </p>
+      )}
+
+      {audioUrl && (
+        <div className="sticky top-3 z-10 flex items-center gap-3 rounded-2xl border border-neutral-200 bg-white p-3 shadow-sm">
+          <span className="shrink-0 pl-2 text-sm font-medium text-neutral-700">
+            Your recording
+          </span>
+          <audio controls src={audioUrl} className="h-10 min-w-0 flex-1" />
+        </div>
       )}
 
       <section className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-sm">
