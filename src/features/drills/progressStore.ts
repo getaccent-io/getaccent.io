@@ -22,6 +22,7 @@ const GRADUATION_STREAK = 2; // …consecutive sessions
 export interface ProgressStore {
   loadSessions: () => DrillSession[];
   saveSession: (session: DrillSession) => void;
+  mergeSessions: (incoming: DrillSession[]) => void;
   trackStats: (trackId: string) => TrackStats;
 }
 
@@ -42,6 +43,18 @@ export function createProgressStore(storageKey: string): ProgressStore {
     window.localStorage.setItem(storageKey, JSON.stringify(all));
   };
 
+  // Union incoming (remote) sessions into localStorage, deduped by
+  // (trackId, date). Re-sorted chronologically because graduation looks at
+  // the last N *consecutive* sessions — remote rows may interleave local ones.
+  const mergeSessions = (incoming: DrillSession[]): void => {
+    const all = loadSessions();
+    const seen = new Set(all.map((s) => `${s.trackId}|${s.date}`));
+    const added = incoming.filter((s) => !seen.has(`${s.trackId}|${s.date}`));
+    if (added.length === 0) return;
+    const merged = [...all, ...added].sort((a, b) => a.date.localeCompare(b.date));
+    window.localStorage.setItem(storageKey, JSON.stringify(merged));
+  };
+
   const trackStats = (trackId: string): TrackStats => {
     const sessions = loadSessions().filter((s) => s.trackId === trackId);
     const last = sessions[sessions.length - 1];
@@ -56,5 +69,5 @@ export function createProgressStore(storageKey: string): ProgressStore {
     };
   };
 
-  return { loadSessions, saveSession, trackStats };
+  return { loadSessions, saveSession, mergeSessions, trackStats };
 }

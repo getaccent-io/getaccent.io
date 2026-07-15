@@ -16,6 +16,7 @@
     "gen:hvpt": "node scripts/generate-hvpt-audio.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.110.2",
     "microsoft-cognitiveservices-speech-sdk": "^1.50.0",
     "next": "^16.2.0",
     "react": "^19.0.0",

@@ -1,8 +1,16 @@
-import { createProgressStore } from "../progressStore";
+import type { DrillSession } from "../progressStore";
+import { DRILL_STORES } from "../stores";
+import { pushSession } from "../sync";
 
 export type { DrillSession, TrackStats } from "../progressStore";
 
-// Key predates the shared store — keep it so existing local progress survives.
-export const { loadSessions, saveSession, trackStats } = createProgressStore(
-  "getaccent.hvpt.sessions",
-);
+const store = DRILL_STORES.hvpt;
+
+export const loadSessions = store.loadSessions;
+export const trackStats = store.trackStats;
+
+/** Saves locally and, when Supabase is configured + signed in, writes through. */
+export function saveSession(session: DrillSession): void {
+  store.saveSession(session);
+  pushSession("hvpt", session);
+}

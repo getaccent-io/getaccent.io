@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthBadge } from "@/components/auth/AuthBadge";
 
 export default function HomePage() {
   return (
@@ -23,6 +24,7 @@ export default function HomePage() {
       >
         or go straight to drills →
       </Link>
+      <AuthBadge />
     </main>
   );
 }
