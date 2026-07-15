@@ -21,7 +21,7 @@ export default function HomePage() {
         href="/drills"
         className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-800"
       >
-        or go straight to ear training →
+        or go straight to drills →
       </Link>
     </main>
   );

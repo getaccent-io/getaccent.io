@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { TrackList } from "@/features/drills/listening";
 
 export const metadata = {
-  title: "Listening drills — getaccent.io",
+  title: "Drills — getaccent.io",
 };
 
 export default function DrillsPage() {
@@ -13,19 +12,33 @@ export default function DrillsPage() {
           <Link href="/" className="text-sm font-medium text-neutral-500 hover:text-neutral-800">
             ← getaccent.io
           </Link>
-          <h1 className="text-sm font-medium text-neutral-500">Ear training</h1>
+          <h1 className="text-sm font-medium text-neutral-500">Drills</h1>
         </div>
-        <div className="mb-6 rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm">
-          <h2 className="font-semibold text-neutral-900">Why train your ear?</h2>
-          <p className="mt-1 text-sm leading-relaxed text-neutral-600">
-            If you keep mixing up two sounds when speaking, it&apos;s usually because your brain
-            files them as the same sound. These drills (HVPT — high-variability phonetic
-            training) rebuild that distinction by making you tell the sounds apart across many
-            different voices. It feels simple, but it&apos;s one of the best-evidenced methods in
-            pronunciation research — and the listening gains transfer to your speaking.
-          </p>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Link
+            href="/drills/listening"
+            className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:border-neutral-400"
+          >
+            <span className="text-2xl">👂</span>
+            <h2 className="mt-2 font-semibold text-neutral-900">Ear training</h2>
+            <p className="mt-1 text-sm text-neutral-600">
+              Learn to hear the difference between sounds across many voices.
+            </p>
+            <span className="mt-auto pt-3 text-xs font-medium text-neutral-400">4 tracks</span>
+          </Link>
+          <Link
+            href="/drills/speaking"
+            className="flex flex-col rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm transition hover:border-neutral-400"
+          >
+            <span className="text-2xl">🗣️</span>
+            <h2 className="mt-2 font-semibold text-neutral-900">Speaking</h2>
+            <p className="mt-1 text-sm text-neutral-600">
+              Say the sounds — copy a native model and get scored instantly.
+            </p>
+            <span className="mt-auto pt-3 text-xs font-medium text-neutral-400">4 tracks</span>
+          </Link>
         </div>
-        <TrackList />
       </div>
     </main>
   );

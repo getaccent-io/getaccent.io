@@ -21,10 +21,10 @@ export default async function ListeningDrillPage({
       <div className="mx-auto max-w-2xl">
         <div className="mb-8 flex items-center justify-between">
           <Link
-            href="/drills"
+            href="/drills/listening"
             className="text-sm font-medium text-neutral-500 hover:text-neutral-800"
           >
-            ← All drills
+            ← Ear training
           </Link>
           <h1 className="text-sm font-medium text-neutral-500">{track.label}</h1>
         </div>
