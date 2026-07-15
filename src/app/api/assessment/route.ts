@@ -80,7 +80,10 @@ export async function POST(req: Request) {
     }
     const profile = buildErrorProfile(azure);
 
-    if (audioBuffer && process.env.NODE_ENV === "development") {
+    // Speaking-drill attempts are single words — keep them out of the
+    // calibration corpus, which is for passage reads.
+    const isDrill = form.get("source") === "drill";
+    if (audioBuffer && !isDrill && process.env.NODE_ENV === "development") {
       try {
         await captureForCalibration(audioBuffer, referenceText, azure, profile);
       } catch (err) {
