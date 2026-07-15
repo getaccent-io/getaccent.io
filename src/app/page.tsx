@@ -1,8 +1,22 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
-    <main>
-      <h1>getaccent.io</h1>
-      <p>Scaffold only — nothing built yet.</p>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-6 bg-neutral-50 px-4">
+      <div className="text-center">
+        <h1 className="text-4xl font-bold tracking-tight text-neutral-900">getaccent.io</h1>
+        <p className="mt-3 max-w-md text-neutral-600">
+          English pronunciation coaching for Korean speakers. Read one paragraph and get a
+          breakdown of exactly which sounds need work.
+        </p>
+      </div>
+      <Link
+        href="/assess"
+        className="rounded-full bg-neutral-900 px-8 py-3 font-medium text-white transition hover:bg-neutral-700"
+      >
+        Read your first paragraph
+      </Link>
+      <p className="text-xs text-neutral-400">~1 minute · microphone required</p>
     </main>
   );
 }

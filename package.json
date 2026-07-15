@@ -14,6 +14,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "microsoft-cognitiveservices-speech-sdk": "^1.50.0",
     "next": "^16.2.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
