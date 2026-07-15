@@ -35,6 +35,22 @@ export function saveSession(session: DrillSession): void {
   window.localStorage.setItem(KEY, JSON.stringify(all));
 }
 
+/** Consecutive days (ending today or yesterday) with at least one session. */
+export function dayStreak(): number {
+  const days = new Set(loadSessions().map((s) => s.date.slice(0, 10)));
+  if (days.size === 0) return 0;
+  const day = new Date();
+  const iso = () => day.toISOString().slice(0, 10);
+  // A streak survives until the end of today, so start from today or yesterday.
+  if (!days.has(iso())) day.setDate(day.getDate() - 1);
+  let streak = 0;
+  while (days.has(iso())) {
+    streak += 1;
+    day.setDate(day.getDate() - 1);
+  }
+  return streak;
+}
+
 export function trackStats(trackId: string): TrackStats {
   const sessions = loadSessions().filter((s) => s.trackId === trackId);
   const last = sessions[sessions.length - 1];
