@@ -50,13 +50,18 @@ Phase 2 so far:
   The generator (`npm run gen:hvpt -- --accent us|uk`) is provider-pluggable
   — ElevenLabs, Azure, Google Chirp, or macOS `say` — and the app only reads
   the manifest + file layout, so switching voices never touches app code.
-- `/shadowing`: the main practice loop (slice 1) — pick a book (Bible in
-  the public-domain WEB translation, Classics), then a passage from its
+- `/shadowing`: the main practice loop — pick a book (Bible in the
+  public-domain WEB translation, Classics), then a passage from its
   contents (library baked into `src/constants/shadowingLibrary.json`).
   The player reads the passage through once, then sentence-by-sentence
   with timed gaps to shadow out loud. Pause / replay / back / next, 0.85×
   slow toggle, resume position per passage. Audio is pre-generated per
   accent (one narrative voice each) under `public/audio/shadowing/`.
+- Scored shadows (opt-in, default on): the mic records only during your
+  gap, each attempt is scored against its sentence in the background
+  (never blocking the loop), live per-sentence chips during practice, a
+  summary + per-sentence breakdown at the end, and the last session score
+  on the library card. Silent gaps count as "skipped", not zero.
 - First-run funnel: home stays assess-first until a real assessment exists,
   then a "continue practice: shadowing" link appears; drill finish screens
   and the results drill plan also hand off to shadowing.
@@ -83,8 +88,7 @@ Phase 1:
 - Results screen: overall scores, per-error findings with severity,
   word-by-word heatmap.
 
-Not built yet: shadow scoring (record the gaps, per-sentence prosody
-feedback), paste-your-own shadowing text, whole-Bible picker, storing
+Not built yet: paste-your-own shadowing text, whole-Bible picker, storing
 assessment recordings (blocked on consent/retention decisions), coaching via
 Claude, payments.
 

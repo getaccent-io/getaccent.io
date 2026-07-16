@@ -4,11 +4,22 @@
 
 const KEY = "getaccent.shadowing.v1";
 
+export interface SessionScore {
+  /** Mean pronunciation score across scored sentences. */
+  pron: number;
+  /** Mean prosody where Azure returned one; null if it never did. */
+  prosody: number | null;
+  attempted: number;
+  total: number;
+}
+
 export interface PassageProgress {
   /** Sentence index to resume from; null once the passage is completed. */
   resumeIndex: number | null;
   completions: number;
   lastAt: string;
+  /** Scored-session summary from the most recent completed run, if any. */
+  lastScore?: SessionScore;
 }
 
 type State = Record<string, PassageProgress>;
@@ -53,9 +64,22 @@ export function markCompleted(id: string): void {
   const state = load();
   const prev = state[id];
   state[id] = {
+    ...prev,
     resumeIndex: null,
     completions: (prev?.completions ?? 0) + 1,
     lastAt: new Date().toISOString(),
+  };
+  save(state);
+}
+
+export function saveLastScore(id: string, score: SessionScore): void {
+  const state = load();
+  const prev = state[id];
+  state[id] = {
+    resumeIndex: prev?.resumeIndex ?? null,
+    completions: prev?.completions ?? 0,
+    lastAt: new Date().toISOString(),
+    lastScore: score,
   };
   save(state);
 }

@@ -96,10 +96,11 @@ export async function POST(req: Request) {
     }
     const profile = buildErrorProfile(azure);
 
-    // Speaking-drill attempts are single words — keep them out of the
-    // calibration corpus, which is for passage reads.
-    const isDrill = form.get("source") === "drill";
-    if (audioBuffer && !isDrill && process.env.NODE_ENV === "development") {
+    // Only bare passage reads (the assess flow sends no source) feed the
+    // calibration corpus — drill words and shadowing sentences would
+    // pollute it.
+    const hasSource = form.get("source") !== null;
+    if (audioBuffer && !hasSource && process.env.NODE_ENV === "development") {
       try {
         await captureForCalibration(audioBuffer, referenceText, accent, azure, profile);
       } catch (err) {

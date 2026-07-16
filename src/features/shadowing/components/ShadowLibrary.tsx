@@ -31,6 +31,7 @@ export function ShadowLibrary({ collection }: { collection: ShadowCollection }) 
               {p && p.completions > 0 && p.resumeIndex === null ? (
                 <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800">
                   done ×{p.completions}
+                  {p.lastScore ? ` · last ${p.lastScore.pron}` : ""}
                 </span>
               ) : p && p.resumeIndex !== null && p.resumeIndex > 0 ? (
                 <span className="rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
