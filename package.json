@@ -13,7 +13,9 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "smoke": "node scripts/azure-smoke.mjs",
-    "gen:hvpt": "node scripts/generate-hvpt-audio.mjs"
+    "gen:hvpt": "node scripts/generate-hvpt-audio.mjs",
+    "build:shadowing": "node scripts/build-shadowing-library.mjs",
+    "gen:shadowing": "node scripts/generate-shadowing-audio.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.110.2",

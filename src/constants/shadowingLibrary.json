@@ -1,0 +1,160 @@
+{
+  "builtAt": "2026-07-16T11:45:55.523Z",
+  "passages": [
+    {
+      "id": "psalm-23",
+      "collection": "bible",
+      "title": "Psalm 23",
+      "source": "World English Bible",
+      "sentences": [
+        "Yahweh is my shepherd: I shall lack nothing.",
+        "He makes me lie down in green pastures.",
+        "He leads me beside still waters.",
+        "He restores my soul.",
+        "He guides me in the paths of righteousness for his name’s sake.",
+        "Even though I walk through the valley of the shadow of death, I will fear no evil, for you are with me.",
+        "Your rod and your staff, they comfort me.",
+        "You prepare a table before me in the presence of my enemies.",
+        "You anoint my head with oil.",
+        "My cup runs over.",
+        "Surely goodness and loving kindness shall follow me all the days of my life, and I will dwell in Yahweh’s house forever."
+      ]
+    },
+    {
+      "id": "psalm-121",
+      "collection": "bible",
+      "title": "Psalm 121",
+      "source": "World English Bible",
+      "sentences": [
+        "I will lift up my eyes to the hills.",
+        "Where does my help come from?",
+        "My help comes from Yahweh, who made heaven and earth.",
+        "He will not allow your foot to be moved.",
+        "He who keeps you will not slumber.",
+        "Behold, he who keeps Israel will neither slumber nor sleep.",
+        "Yahweh is your keeper.",
+        "Yahweh is your shade on your right hand.",
+        "The sun will not harm you by day, nor the moon by night.",
+        "Yahweh will keep you from all evil.",
+        "He will keep your soul.",
+        "Yahweh will keep your going out and your coming in, from this time forward, and forever more."
+      ]
+    },
+    {
+      "id": "john-1",
+      "collection": "bible",
+      "title": "John 1:1–14",
+      "source": "World English Bible",
+      "sentences": [
+        "In the beginning was the Word, and the Word was with God, and the Word was God.",
+        "The same was in the beginning with God.",
+        "All things were made through him.",
+        "Without him was not anything made that has been made.",
+        "In him was life, and the life was the light of men.",
+        "The light shines in the darkness, and the darkness hasn’t overcome it.",
+        "There came a man, sent from God, whose name was John.",
+        "The same came as a witness, that he might testify about the light, that all might believe through him.",
+        "He was not the light, but was sent that he might testify about the light.",
+        "The true light that enlightens everyone was coming into the world.",
+        "He was in the world, and the world was made through him, and the world didn’t recognize him.",
+        "He came to his own, and those who were his own didn’t receive him.",
+        "But as many as received him, to them he gave the right to become God’s children,",
+        "to those who believe in his name: who were born not of blood, nor of the will of the flesh, nor of the will of man, but of God.",
+        "The Word became flesh, and lived among us.",
+        "We saw his glory, such glory as of the one and only Son of the Father, full of grace and truth."
+      ]
+    },
+    {
+      "id": "1-corinthians-13",
+      "collection": "bible",
+      "title": "1 Corinthians 13",
+      "source": "World English Bible",
+      "sentences": [
+        "If I speak with the languages of men and of angels, but don’t have love, I have become sounding brass, or a clanging cymbal.",
+        "If I have the gift of prophecy, and know all mysteries and all knowledge;",
+        "and if I have all faith, so as to remove mountains, but don’t have love, I am nothing.",
+        "If I give away all my goods to feed the poor, and if I give my body to be burned, but don’t have love, it profits me nothing.",
+        "Love is patient and is kind; love doesn’t envy.",
+        "Love doesn’t brag, is not proud, doesn’t behave itself inappropriately,",
+        "doesn’t seek its own way, is not provoked, takes no account of evil;",
+        "doesn’t rejoice in unrighteousness, but rejoices with the truth;",
+        "bears all things, believes all things, hopes all things, endures all things.",
+        "Love never fails.",
+        "But where there are prophecies, they will be done away with.",
+        "Where there are various languages, they will cease.",
+        "Where there is knowledge, it will be done away with.",
+        "For we know in part, and we prophesy in part; but when that which is complete has come,",
+        "then that which is partial will be done away with.",
+        "When I was a child, I spoke as a child, I felt as a child, I thought as a child.",
+        "Now that I have become a man, I have put away childish things.",
+        "For now we see in a mirror, dimly, but then face to face.",
+        "Now I know in part, but then I will know fully, even as I was also fully known.",
+        "But now faith, hope, and love remain—these three.",
+        "The greatest of these is love."
+      ]
+    },
+    {
+      "id": "philippians-4",
+      "collection": "bible",
+      "title": "Philippians 4:4–13",
+      "source": "World English Bible",
+      "sentences": [
+        "Rejoice in the Lord always!",
+        "Again I will say, “Rejoice!”",
+        "Let your gentleness be known to all men.",
+        "The Lord is at hand.",
+        "In nothing be anxious, but in everything, by prayer and petition with thanksgiving, let your requests be made known to God.",
+        "And the peace of God, which surpasses all understanding, will guard your hearts and your thoughts in Christ Jesus.",
+        "Finally, brothers, whatever things are true, whatever things are honorable, whatever things are just, whatever things are pure,",
+        "whatever things are lovely, whatever things are of good report;",
+        "if there is any virtue, and if there is any praise, think about these things.",
+        "The things which you learned, received, heard, and saw in me: do these things, and the God of peace will be with you.",
+        "But I rejoice in the Lord greatly, that now at length you have revived your thought for me;",
+        "in which you did indeed take thought, but you lacked opportunity.",
+        "Not that I speak because of lack, for I have learned in whatever state I am, to be content in it.",
+        "I know how to be humbled, and I know also how to abound.",
+        "In everything and in all things I have learned the secret both to be filled and to be hungry, both to abound and to be in need.",
+        "I can do all things through Christ, who strengthens me."
+      ]
+    },
+    {
+      "id": "north-wind",
+      "collection": "classics",
+      "title": "The North Wind and the Sun",
+      "source": "Aesop's Fables",
+      "sentences": [
+        "The North Wind and the Sun were disputing which was the stronger, when a traveler came along wrapped in a warm cloak.",
+        "They agreed that the one who first succeeded in making the traveler take his cloak off should be considered stronger than the other.",
+        "Then the North Wind blew as hard as he could, but the more he blew,",
+        "the more closely did the traveler fold his cloak around him, and at last the North Wind gave up the attempt.",
+        "Then the Sun shined out warmly, and immediately the traveler took off his cloak.",
+        "And so the North Wind was obliged to confess that the Sun was the stronger of the two."
+      ]
+    },
+    {
+      "id": "gettysburg",
+      "collection": "classics",
+      "title": "The Gettysburg Address",
+      "source": "Abraham Lincoln, 1863",
+      "sentences": [
+        "Four score and seven years ago our fathers brought forth on this continent a new nation,",
+        "conceived in liberty, and dedicated to the proposition that all men are created equal.",
+        "Now we are engaged in a great civil war, testing whether that nation,",
+        "or any nation so conceived and so dedicated, can long endure.",
+        "We are met on a great battlefield of that war.",
+        "We have come to dedicate a portion of that field as a final resting place for those who here gave their lives that that nation might live.",
+        "It is altogether fitting and proper that we should do this.",
+        "But, in a larger sense, we cannot dedicate, we cannot consecrate, we cannot hallow this ground.",
+        "The brave men, living and dead, who struggled here have consecrated it, far above our poor power to add or detract.",
+        "The world will little note, nor long remember, what we say here, but it can never forget what they did here.",
+        "It is for us the living, rather,",
+        "to be dedicated here to the unfinished work which they who fought here have thus far so nobly advanced.",
+        "It is rather for us to be here dedicated to the great task remaining before us,",
+        "that from these honored dead we take increased devotion to that cause for which they gave the last full measure of devotion,",
+        "that we here highly resolve that these dead shall not have died in vain, that this nation, under God,",
+        "shall have a new birth of freedom, and that government of the people,",
+        "by the people, for the people, shall not perish from the earth."
+      ]
+    }
+  ]
+}

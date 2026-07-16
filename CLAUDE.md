@@ -19,6 +19,9 @@ FIND errors (Azure Pronunciation Assessment) → FIX errors (drills).
 - `npm run gen:hvpt` — regenerate one accent's drill audio bank;
   `-- --accent us|uk --provider elevenlabs|azure|google|macos`
   (defaults: us, first provider with keys in `.env.local`)
+- `npm run build:shadowing` — rebake the shadowing library JSON (fetches
+  WEB Bible text); then `npm run gen:shadowing -- --accent us|uk` per
+  accent, or the player reports a stale bank
 - `npm run typecheck && npm run lint` — run both before committing
 - Dev without a mic: the /assess page has a dev-only "skip mic" button.
 
@@ -35,6 +38,8 @@ FIND errors (Azure Pronunciation Assessment) → FIX errors (drills).
   file layout, so regenerating with another provider (ElevenLabs/Google/
   macOS) needs no code change. After any regen, spot-check the heteronyms
   (read/lead/bow) — see note in the gen script.
+- Shadowing content must stay public-domain (WEB Bible, classics). NIV and
+  most modern translations need a license — don't add them as library text.
 - Azure names phonemes only for en-US; en-GB returns scored but NAMELESS
   slots. UK results get names re-attached from a committed template
   (`src/lib/scoring/ukPhonemeNames.json`). Rerun

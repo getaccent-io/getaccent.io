@@ -145,6 +145,12 @@ export function HvptDrill({ track }: { track: MinimalPairTrack }) {
             All tracks
           </Link>
         </div>
+        <Link
+          href="/shadowing"
+          className="text-sm font-medium text-blue-700 underline underline-offset-2 hover:text-blue-900"
+        >
+          Next: shadowing practice →
+        </Link>
       </div>
     );
   }

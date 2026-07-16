@@ -208,6 +208,16 @@ export function ResultsView({
               </li>
             ))}
           </ul>
+          <p className="mt-3 text-xs text-neutral-500">
+            Drills sharpen single sounds. After a session, move on to{" "}
+            <Link
+              href="/shadowing"
+              className="font-medium text-blue-700 underline underline-offset-2 hover:text-blue-900"
+            >
+              shadowing practice
+            </Link>{" "}
+            — the main workout for rhythm and flow.
+          </p>
         </section>
       )}
 

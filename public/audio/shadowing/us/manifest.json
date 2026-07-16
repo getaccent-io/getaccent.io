@@ -1,0 +1,15 @@
+{
+  "generatedAt": "2026-07-16T11:46:53.810Z",
+  "accent": "us",
+  "voice": "en-US-JennyNeural",
+  "ext": "mp3",
+  "passages": {
+    "psalm-23": 11,
+    "psalm-121": 12,
+    "john-1": 16,
+    "1-corinthians-13": 21,
+    "philippians-4": 16,
+    "north-wind": 6,
+    "gettysburg": 17
+  }
+}

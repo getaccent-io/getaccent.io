@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AuthBadge } from "@/components/auth/AuthBadge";
 import { AccentToggle } from "@/components/ui/AccentToggle";
+import { ShadowingHomeLink } from "@/features/shadowing";
 
 export default function HomePage() {
   return (
@@ -20,6 +21,7 @@ export default function HomePage() {
         Read your first paragraph
       </Link>
       <p className="text-xs text-neutral-400">~1 minute · microphone required</p>
+      <ShadowingHomeLink />
       <Link
         href="/drills"
         className="text-sm font-medium text-neutral-500 underline underline-offset-4 hover:text-neutral-800"
