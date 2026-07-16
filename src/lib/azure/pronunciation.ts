@@ -46,10 +46,15 @@ interface SegmentScores {
  * reference text. Uses continuous recognition so paragraph-length audio
  * (beyond the 60s short-audio limit) works; per-segment results are merged
  * with word-count weighting.
+ *
+ * Locale note: en-US returns named (SAPI) phonemes; en-GB scores phonemes but
+ * leaves their names empty — naming is an en-US-only Azure feature. UK results
+ * get names re-attached from a template downstream (lib/scoring/ukPhonemes).
  */
 export function assessPronunciation(
   wav: Buffer,
   referenceText: string,
+  locale: "en-US" | "en-GB" = "en-US",
 ): Promise<AzureAssessmentResult> {
   const pcm = extractPcm(wav);
 
@@ -57,7 +62,7 @@ export function assessPronunciation(
     process.env.AZURE_SPEECH_KEY!,
     process.env.AZURE_SPEECH_REGION!,
   );
-  speechConfig.speechRecognitionLanguage = "en-US";
+  speechConfig.speechRecognitionLanguage = locale;
 
   const format = sdk.AudioStreamFormat.getWaveFormatPCM(16000, 16, 1);
   const pushStream = sdk.AudioInputStream.createPushStream(format);

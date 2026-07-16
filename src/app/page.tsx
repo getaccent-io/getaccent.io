@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { AuthBadge } from "@/components/auth/AuthBadge";
+import { AccentToggle } from "@/components/ui/AccentToggle";
 
 export default function HomePage() {
   return (
@@ -11,6 +12,7 @@ export default function HomePage() {
           breakdown of exactly which sounds need work.
         </p>
       </div>
+      <AccentToggle />
       <Link
         href="/assess"
         className="rounded-full bg-neutral-900 px-8 py-3 font-medium text-white transition hover:bg-neutral-700"

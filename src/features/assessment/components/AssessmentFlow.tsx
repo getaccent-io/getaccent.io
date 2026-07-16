@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Passage } from "@/constants/passages";
 import { useRecorder } from "@/features/recording/hooks/useRecorder";
 import { blobToWav16kMono, silentWav } from "@/features/recording/utils/wav";
+import { getAccent } from "@/lib/accent";
 import type { AssessmentResponse } from "@/types/assessment";
 import { ResultsView } from "./ResultsView";
 
@@ -13,6 +14,7 @@ async function submitAssessment(wav: Blob, referenceText: string): Promise<Asses
   const form = new FormData();
   form.append("audio", new File([wav], "recording.wav", { type: "audio/wav" }));
   form.append("referenceText", referenceText);
+  form.append("accent", getAccent());
   const res = await fetch("/api/assessment", { method: "POST", body: form });
   const body = await res.json();
   if (!res.ok) throw new Error(body.error ?? `Request failed (${res.status})`);

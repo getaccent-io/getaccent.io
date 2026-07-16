@@ -1,8 +1,11 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { PHONEME_TO_TRACK, getTrack } from "@/constants/minimalPairs";
+import { getAccent } from "@/lib/accent";
 import type { AssessmentResponse, ErrorFinding, WordResult } from "@/types/assessment";
+import { saveLastAssessment } from "../lastAssessment";
 
 function scoreColor(accuracy: number | null): string {
   if (accuracy === null) return "text-neutral-400";
@@ -116,6 +119,13 @@ export function ResultsView({
   onRetry: () => void;
 }) {
   const { profile, mode } = result;
+  const topRecommendation = profile.recommendations[0];
+
+  // Persist the drill plan so /drills can badge recommended tracks later.
+  // Mock results stay out — demo data shouldn't steer real training.
+  useEffect(() => {
+    if (mode === "azure") saveLastAssessment(getAccent(), profile.recommendations);
+  }, [mode, profile.recommendations]);
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -154,6 +164,52 @@ export function ResultsView({
           </div>
         </div>
       </section>
+
+      {profile.recommendations.length > 0 && (
+        <section className="rounded-2xl border border-blue-200 bg-blue-50 p-5 shadow-sm">
+          <h3 className="font-semibold text-neutral-900">Your drill plan</h3>
+          <p className="mt-1 text-sm text-neutral-600">
+            Weakest sound first. Start with your ears — it&apos;s hard to say a difference you
+            can&apos;t hear.
+          </p>
+          <ul className="mt-4 flex flex-col gap-3">
+            {profile.recommendations.map((r, i) => (
+              <li
+                key={r.trackId}
+                className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-200 bg-white p-4"
+              >
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="font-semibold text-neutral-900">{r.trackLabel}</span>
+                    {i === 0 && (
+                      <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-800">
+                        start here
+                      </span>
+                    )}
+                  </div>
+                  <p className="mt-0.5 text-sm text-neutral-600">
+                    {r.reason} — heard in {r.exampleWords.join(", ")}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-2">
+                  <Link
+                    href={`/drills/listening/${r.trackId}`}
+                    className="rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-700"
+                  >
+                    👂 Ear training
+                  </Link>
+                  <Link
+                    href={`/drills/speaking/${r.trackId}`}
+                    className="rounded-full border border-neutral-300 px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-100"
+                  >
+                    🗣️ Speaking
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="flex flex-col gap-4">
         {profile.findings.map((f) => (
@@ -209,10 +265,10 @@ export function ResultsView({
           Record again
         </button>
         <Link
-          href="/drills"
+          href={topRecommendation ? `/drills/listening/${topRecommendation.trackId}` : "/drills"}
           className="rounded-full bg-neutral-900 px-8 py-3 font-medium text-white transition hover:bg-neutral-700"
         >
-          Start ear training
+          {topRecommendation ? `Start ear training: ${topRecommendation.trackLabel}` : "Explore drills"}
         </Link>
       </div>
     </div>

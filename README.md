@@ -38,12 +38,27 @@ Phase 2 so far:
 - Optional Supabase accounts (magic-link email): drill sessions write
   through on finish and two-way sync on sign-in; localStorage remains the
   UI's source of truth and the only store when keys are unset.
-- Drill audio is pre-generated macOS TTS (`npm run gen:hvpt`) committed under
-  `public/audio/drills/hvpt/` — a placeholder with the same file layout
-  ElevenLabs audio will use later.
-- Assessment results link weak phonemes straight to the matching drill track.
+- US/UK accent toggle on the home screen: assessment scores against the
+  matching Azure locale (en-US / en-GB) and drills play the matching audio
+  bank. Azure only names phonemes for en-US — en-GB returns scored but
+  nameless slots — so UK results get names re-attached from a committed
+  template (`src/lib/scoring/ukPhonemes.ts`, built by
+  `scripts/build-uk-phoneme-names.mjs`), keeping findings and drill links
+  accent-blind.
+- Drill audio is two pre-generated multi-voice banks (`us/`, `uk/`)
+  committed under `public/audio/drills/hvpt/`, 6 Azure neural voices each.
+  The generator (`npm run gen:hvpt -- --accent us|uk`) is provider-pluggable
+  — ElevenLabs, Azure, Google Chirp, or macOS `say` — and the app only reads
+  the manifest + file layout, so switching voices never touches app code.
+- Results end in a ranked drill plan ("Your drill plan", weakest sound
+  first): weak phonemes and weak cluster/ending sounds map to their tracks
+  with ear-training + speaking links. The plan is computed in the scoring
+  brain (`profile.recommendations`), persists in localStorage after real
+  assessments, and `/drills` shows a start-here banner + "recommended"
+  badges on matching tracks.
 - `npm run smoke` synthesizes real speech, runs it through the full
-  assessment pipeline, and prints the profile — use it to verify Azure keys.
+  assessment pipeline, and prints the profile — use it to verify Azure keys
+  (`-- --accent uk` exercises the British path).
 
 Phase 1:
 
@@ -58,8 +73,9 @@ Phase 1:
 - Results screen: overall scores, per-error findings with severity,
   word-by-word heatmap.
 
-Not built yet: shadowing drills, storing assessment recordings (blocked on
-consent/retention decisions), coaching via Claude, ElevenLabs TTS, payments.
+Not built yet: shadowing drills (needs sentence-level model audio), storing
+assessment recordings (blocked on consent/retention decisions), coaching via
+Claude, payments.
 
 ## Layout
 

@@ -15,7 +15,10 @@ FIND errors (Azure Pronunciation Assessment) → FIX errors (drills).
 - `npm run dev` — dev server on :3000
 - `npm run smoke` — synthesizes real speech, runs the full assessment
   pipeline, prints the profile. Run after touching the audio/Azure path.
-- `npm run gen:hvpt` — regenerate drill audio bank (macOS only)
+  `-- --accent uk` for the British path.
+- `npm run gen:hvpt` — regenerate one accent's drill audio bank;
+  `-- --accent us|uk --provider elevenlabs|azure|google|macos`
+  (defaults: us, first provider with keys in `.env.local`)
 - `npm run typecheck && npm run lint` — run both before committing
 - Dev without a mic: the /assess page has a dev-only "skip mic" button.
 
@@ -26,8 +29,17 @@ FIND errors (Azure Pronunciation Assessment) → FIX errors (drills).
 - The scoring "brain" is `src/lib/scoring/errorProfile.ts`. Its thresholds
   are heuristic and known to false-positive on errors 2–3 (syllable
   structure, word stress) — tune against real recordings, don't trust blindly.
-- HVPT drill audio must stay multi-voice (that's the point of HVPT). Current
-  audio is macOS TTS placeholder for ElevenLabs, same file layout.
+- HVPT drill audio must stay multi-voice (that's the point of HVPT). Two
+  banks — one per accent (`us/`, `uk/`, home-screen toggle) — of Azure
+  neural voices; the app's only contract is `{accent}/manifest.json` + the
+  file layout, so regenerating with another provider (ElevenLabs/Google/
+  macOS) needs no code change. After any regen, spot-check the heteronyms
+  (read/lead/bow) — see note in the gen script.
+- Azure names phonemes only for en-US; en-GB returns scored but NAMELESS
+  slots. UK results get names re-attached from a committed template
+  (`src/lib/scoring/ukPhonemeNames.json`). Rerun
+  `scripts/build-uk-phoneme-names.mjs` whenever the passage or the drill
+  word list changes, or UK phoneme findings silently degrade.
 - Drill progress is localStorage (`src/features/drills/listening/progress.ts`),
   shaped to migrate to a future Supabase `drill_sessions` table.
 - `src/features/*` layout: components/hooks per feature, `src/lib` for

@@ -8,6 +8,7 @@ import type {
   WordResult,
   WordStressIssue,
 } from "@/types/assessment";
+import { recommendDrills } from "./recommendDrills";
 
 // Azure's default (SAPI) phoneme alphabet for en-US.
 const VOWELS = new Set([
@@ -27,12 +28,15 @@ const MIN_OCCURRENCES = 2; // one bad instance could be noise; require a pattern
 const isConsonant = (p: string) => !VOWELS.has(p.toLowerCase());
 
 function phonemeAccuracy(w: AzureWord): { phoneme: string; accuracy: number }[] {
+  // Empty names occur on en-GB results for words outside the UK naming
+  // template — those phonemes can't be classified, so skip them. Naming is
+  // all-or-nothing per word, so this never truncates a word mid-sequence.
   return (w.Phonemes ?? [])
     .map((p) => ({
       phoneme: p.Phoneme.toLowerCase(),
       accuracy: p.PronunciationAssessment?.AccuracyScore ?? NaN,
     }))
-    .filter((p) => !Number.isNaN(p.accuracy));
+    .filter((p) => p.phoneme !== "" && !Number.isNaN(p.accuracy));
 }
 
 function mean(xs: number[]): number {
@@ -112,6 +116,7 @@ function findSyllableStructure(words: AzureWord[]): ErrorFinding {
         kind: "final-consonant",
         detail: `final /${last.phoneme}/`,
         accuracy: Math.round(last.accuracy),
+        phonemes: [last.phoneme],
       });
     }
 
@@ -126,6 +131,7 @@ function findSyllableStructure(words: AzureWord[]): ErrorFinding {
             kind: "cluster",
             detail: `cluster /${run.map((r) => r.phoneme).join(" ")}/`,
             accuracy: Math.round(weakest.accuracy),
+            phonemes: run.filter((r) => r.accuracy < PHONEME_WEAK).map((r) => r.phoneme),
           });
         }
       }
@@ -173,14 +179,15 @@ function findWordStress(words: AzureWord[], prosodyScore: number | null): ErrorF
     const syllables = w.Syllables ?? [];
     if (syllables.length < 2) continue;
 
-    const weak = syllables.filter(
-      (s) => (s.PronunciationAssessment?.AccuracyScore ?? 100) < SYLLABLE_WEAK,
-    );
+    const weak = syllables
+      .map((s, i) => ({ s, i }))
+      .filter(({ s }) => (s.PronunciationAssessment?.AccuracyScore ?? 100) < SYLLABLE_WEAK);
     const wordAccuracy = w.PronunciationAssessment?.AccuracyScore ?? 0;
     if (weak.length > 0 && weak.length < syllables.length) {
       issues.push({
         word: w.Word,
-        weakSyllables: weak.map((s) => s.Syllable),
+        // en-GB leaves syllable names empty — fall back to the position.
+        weakSyllables: weak.map(({ s, i }) => s.Syllable || `syllable ${i + 1}`),
         accuracy: Math.round(wordAccuracy),
       });
     }
@@ -225,6 +232,12 @@ export function buildErrorProfile(result: AzureAssessmentResult): ErrorProfile {
     })),
   }));
 
+  const findings = [
+    findPhonemeProduction(result.Words),
+    findSyllableStructure(result.Words),
+    findWordStress(result.Words, prosody),
+  ];
+
   return {
     overall: {
       pronScore: Math.round(pa.PronScore),
@@ -233,11 +246,8 @@ export function buildErrorProfile(result: AzureAssessmentResult): ErrorProfile {
       completeness: Math.round(pa.CompletenessScore),
       prosody: prosody !== null ? Math.round(prosody) : null,
     },
-    findings: [
-      findPhonemeProduction(result.Words),
-      findSyllableStructure(result.Words),
-      findWordStress(result.Words, prosody),
-    ],
+    findings,
+    recommendations: recommendDrills(findings),
     words,
   };
 }

@@ -1,8 +1,10 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { NextResponse } from "next/server";
+import { ACCENT_LOCALE, isAccent, type Accent } from "@/lib/accent";
 import { assessPronunciation, azureConfigured } from "@/lib/azure/pronunciation";
 import { buildErrorProfile } from "@/lib/scoring/errorProfile";
+import { nameUkPhonemes } from "@/lib/scoring/ukPhonemes";
 import { mockAzureAssessment } from "@/mocks/azureAssessment";
 import type {
   AssessmentResponse,
@@ -21,6 +23,7 @@ const MAX_AUDIO_BYTES = 12 * 1024 * 1024; // ~6 min of 16kHz mono PCM
 async function captureForCalibration(
   audio: Buffer,
   referenceText: string,
+  accent: Accent,
   azure: AzureAssessmentResult,
   profile: ErrorProfile,
 ): Promise<void> {
@@ -38,7 +41,13 @@ async function captureForCalibration(
     writeFile(
       path.join(dir, "meta.json"),
       JSON.stringify(
-        { capturedAt: new Date().toISOString(), referenceText, audioBytes: audio.length },
+        {
+          capturedAt: new Date().toISOString(),
+          referenceText,
+          accent,
+          locale: ACCENT_LOCALE[accent],
+          audioBytes: audio.length,
+        },
         null,
         2,
       ),
@@ -65,6 +74,10 @@ export async function POST(req: Request) {
   if (audio.size > MAX_AUDIO_BYTES) {
     return NextResponse.json({ error: "Audio too large" }, { status: 413 });
   }
+  // Target accent: sets the Azure locale, so scores judge against the accent
+  // the user is actually aiming for. Absent/unknown values mean American.
+  const accentField = form.get("accent");
+  const accent: Accent = isAccent(accentField) ? accentField : "us";
 
   try {
     // Without Azure credentials the endpoint serves a deterministic mock so
@@ -74,7 +87,10 @@ export async function POST(req: Request) {
     let audioBuffer: Buffer | null = null;
     if (mode === "azure") {
       audioBuffer = Buffer.from(await audio.arrayBuffer());
-      azure = await assessPronunciation(audioBuffer, referenceText);
+      azure = await assessPronunciation(audioBuffer, referenceText, ACCENT_LOCALE[accent]);
+      // en-GB scores phonemes without naming them; re-attach known names so
+      // findings and drill links work for UK too.
+      if (accent === "uk") azure = nameUkPhonemes(azure);
     } else {
       azure = mockAzureAssessment(referenceText);
     }
@@ -85,7 +101,7 @@ export async function POST(req: Request) {
     const isDrill = form.get("source") === "drill";
     if (audioBuffer && !isDrill && process.env.NODE_ENV === "development") {
       try {
-        await captureForCalibration(audioBuffer, referenceText, azure, profile);
+        await captureForCalibration(audioBuffer, referenceText, accent, azure, profile);
       } catch (err) {
         console.warn("Calibration capture failed:", err);
       }

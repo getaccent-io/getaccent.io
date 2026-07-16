@@ -3,6 +3,10 @@
 // can't hear; each pair differs only in that contrast. `phonemes` uses the
 // same SAPI symbols the Azure assessment returns, so an error profile can be
 // mapped straight to a track.
+//
+// One word list serves both accent banks (us/uk), so every pair must be a
+// minimal pair in BOTH accents. That's why vase/base is out (RP says /vɑːz/)
+// and vet/bet is in. Check new pairs against RP before adding.
 
 export interface MinimalPairTrack {
   id: string;
@@ -58,7 +62,7 @@ export const HVPT_TRACKS: MinimalPairTrack[] = [
       ["van", "ban"],
       ["very", "berry"],
       ["vote", "boat"],
-      ["vase", "base"],
+      ["vet", "bet"],
       ["vow", "bow"],
       ["curve", "curb"],
       ["marvel", "marble"],

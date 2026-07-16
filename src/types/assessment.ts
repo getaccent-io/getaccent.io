@@ -79,6 +79,8 @@ export interface SyllableStructureIssue {
   kind: "final-consonant" | "cluster";
   detail: string;
   accuracy: number;
+  /** The weak phoneme(s) behind this issue — lets recommendations map it to a drill track. */
+  phonemes: string[];
 }
 
 export interface WordStressIssue {
@@ -121,6 +123,19 @@ export interface WordResult {
   phonemes: { phoneme: string; accuracy: number | null }[];
 }
 
+/** FIND → FIX: a drill track the profile says to train, with the evidence. */
+export interface DrillRecommendation {
+  trackId: string;
+  trackLabel: string;
+  /** Weak sounds that mapped to this track. */
+  phonemes: string[];
+  /** Weighted average accuracy of those sounds — lower means drill this first. */
+  avgAccuracy: number;
+  exampleWords: string[];
+  /** Human-readable evidence, e.g. "/r/ averaged 58 · 2 weak cluster spots". */
+  reason: string;
+}
+
 export interface ErrorProfile {
   overall: {
     pronScore: number;
@@ -130,6 +145,8 @@ export interface ErrorProfile {
     prosody: number | null;
   };
   findings: ErrorFinding[];
+  /** Drill tracks to train, weakest sound first. Empty when nothing maps. */
+  recommendations: DrillRecommendation[];
   words: WordResult[];
 }
 

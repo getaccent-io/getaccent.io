@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { RecommendationBanner } from "@/features/assessment";
 
 export const metadata = {
   title: "Drills — getaccent.io",
@@ -14,6 +15,8 @@ export default function DrillsPage() {
           </Link>
           <h1 className="text-sm font-medium text-neutral-500">Drills</h1>
         </div>
+
+        <RecommendationBanner />
 
         <div className="grid grid-cols-2 gap-4">
           <Link

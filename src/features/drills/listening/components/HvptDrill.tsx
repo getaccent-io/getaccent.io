@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { MinimalPairTrack } from "@/constants/minimalPairs";
+import { useAccent } from "@/hooks/useAccent";
+import type { Accent } from "@/lib/accent";
 import { saveSession } from "../progress";
 
 const TRIALS_PER_SESSION = 10;
@@ -12,10 +14,13 @@ interface Trial {
   /** index into pair of the word actually played */
   target: 0 | 1;
   voice: string;
+  ext: string;
 }
 
 interface Manifest {
   voices: string[];
+  /** audio file extension — banks generated before it existed are m4a */
+  ext?: string;
 }
 
 function shuffle<T>(xs: T[]): T[] {
@@ -27,22 +32,24 @@ function shuffle<T>(xs: T[]): T[] {
   return a;
 }
 
-function buildTrials(track: MinimalPairTrack, voices: string[]): Trial[] {
+function buildTrials(track: MinimalPairTrack, manifest: Manifest): Trial[] {
   // Cover every pair at least once before repeating any.
   const pairs: [string, string][] = [];
   while (pairs.length < TRIALS_PER_SESSION) pairs.push(...shuffle(track.pairs));
   return pairs.slice(0, TRIALS_PER_SESSION).map((pair) => ({
     pair,
     target: Math.random() < 0.5 ? 0 : 1,
-    voice: voices[Math.floor(Math.random() * voices.length)],
+    voice: manifest.voices[Math.floor(Math.random() * manifest.voices.length)],
+    ext: manifest.ext ?? "m4a",
   }));
 }
 
-function audioUrl(trackId: string, word: string, voice: string): string {
-  return `/audio/drills/hvpt/${trackId}/${word}__${voice}.m4a`;
+function audioUrl(accent: Accent, trackId: string, trial: Trial): string {
+  return `/audio/drills/hvpt/${accent}/${trackId}/${trial.pair[trial.target]}__${trial.voice}.${trial.ext}`;
 }
 
 export function HvptDrill({ track }: { track: MinimalPairTrack }) {
+  const accent = useAccent();
   const [manifest, setManifest] = useState<Manifest | null | "missing">(null);
   const [trials, setTrials] = useState<Trial[]>([]);
   const [index, setIndex] = useState(0);
@@ -53,24 +60,24 @@ export function HvptDrill({ track }: { track: MinimalPairTrack }) {
   const savedRef = useRef(false);
 
   useEffect(() => {
-    fetch("/audio/drills/hvpt/manifest.json")
+    fetch(`/audio/drills/hvpt/${accent}/manifest.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((m: Manifest) => {
         setManifest(m);
-        setTrials(buildTrials(track, m.voices));
+        setTrials(buildTrials(track, m));
       })
       .catch(() => setManifest("missing"));
-  }, [track]);
+  }, [track, accent]);
 
   const trial = trials[index];
 
   const play = useCallback(() => {
     if (!trial) return;
     audioRef.current?.pause();
-    const audio = new Audio(audioUrl(track.id, trial.pair[trial.target], trial.voice));
+    const audio = new Audio(audioUrl(accent, track.id, trial));
     audioRef.current = audio;
     void audio.play();
-  }, [trial, track.id]);
+  }, [trial, track.id, accent]);
 
   // Auto-play each new trial.
   useEffect(() => {
@@ -121,7 +128,7 @@ export function HvptDrill({ track }: { track: MinimalPairTrack }) {
           <button
             onClick={() => {
               savedRef.current = false;
-              setTrials(buildTrials(track, manifest.voices));
+              setTrials(buildTrials(track, manifest));
               setIndex(0);
               setAnswer(null);
               setCorrectCount(0);

@@ -6,6 +6,8 @@ import { ARTICULATION } from "@/constants/articulation";
 import type { MinimalPairTrack } from "@/constants/minimalPairs";
 import { useRecorder } from "@/features/recording/hooks/useRecorder";
 import { blobToWav16kMono } from "@/features/recording/utils/wav";
+import { useAccent } from "@/hooks/useAccent";
+import type { Accent } from "@/lib/accent";
 import type { AssessmentResponse } from "@/types/assessment";
 import { saveSession } from "../progress";
 
@@ -20,6 +22,7 @@ interface Trial {
   phoneme: string;
   /** Model voice for this trial — varies across trials, fixed within one. */
   voice: string;
+  ext: string;
 }
 
 interface TrialResult {
@@ -33,6 +36,8 @@ interface TrialResult {
 
 interface Manifest {
   voices: string[];
+  /** audio file extension — banks generated before it existed are m4a */
+  ext?: string;
 }
 
 // While in "prompt", a finished recording (recorder.status === "recorded")
@@ -48,7 +53,7 @@ function shuffle<T>(xs: T[]): T[] {
   return a;
 }
 
-function buildTrials(track: MinimalPairTrack, voices: string[]): Trial[] {
+function buildTrials(track: MinimalPairTrack, manifest: Manifest): Trial[] {
   // Both words of a pair are drilled — each exercises one side of the contrast.
   const words = track.pairs.flatMap((pair) => [
     { word: pair[0], phoneme: track.phonemes[0] },
@@ -58,19 +63,21 @@ function buildTrials(track: MinimalPairTrack, voices: string[]): Trial[] {
   while (picked.length < TRIALS_PER_SESSION) picked.push(...shuffle(words));
   return picked.slice(0, TRIALS_PER_SESSION).map((w) => ({
     ...w,
-    voice: voices[Math.floor(Math.random() * voices.length)],
+    voice: manifest.voices[Math.floor(Math.random() * manifest.voices.length)],
+    ext: manifest.ext ?? "m4a",
   }));
 }
 
-function modelUrl(trackId: string, word: string, voice: string): string {
-  return `/audio/drills/hvpt/${trackId}/${word}__${voice}.m4a`;
+function modelUrl(accent: Accent, trackId: string, trial: Trial): string {
+  return `/audio/drills/hvpt/${accent}/${trackId}/${trial.word}__${trial.voice}.${trial.ext}`;
 }
 
-async function scoreAttempt(wav: Blob, word: string): Promise<AssessmentResponse> {
+async function scoreAttempt(wav: Blob, word: string, accent: Accent): Promise<AssessmentResponse> {
   const form = new FormData();
   form.append("audio", new File([wav], "attempt.wav", { type: "audio/wav" }));
   form.append("referenceText", word);
   form.append("source", "drill");
+  form.append("accent", accent);
   const res = await fetch("/api/assessment", { method: "POST", body: form });
   const body = await res.json();
   if (!res.ok) throw new Error(body.error ?? `Request failed (${res.status})`);
@@ -119,6 +126,7 @@ function ArticulationCard({ phoneme }: { phoneme: string }) {
 }
 
 export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
+  const accent = useAccent();
   const recorder = useRecorder();
   const [manifest, setManifest] = useState<Manifest | null | "missing">(null);
   const [trials, setTrials] = useState<Trial[]>([]);
@@ -132,14 +140,14 @@ export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
   const savedRef = useRef(false);
 
   useEffect(() => {
-    fetch("/audio/drills/hvpt/manifest.json")
+    fetch(`/audio/drills/hvpt/${accent}/manifest.json`)
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((m: Manifest) => {
         setManifest(m);
-        setTrials(buildTrials(track, m.voices));
+        setTrials(buildTrials(track, m));
       })
       .catch(() => setManifest("missing"));
-  }, [track]);
+  }, [track, accent]);
 
   const trial = trials[index];
   const result = results[results.length - 1];
@@ -148,10 +156,10 @@ export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
     if (!trial) return;
     ownAudioRef.current?.pause();
     modelAudioRef.current?.pause();
-    const audio = new Audio(modelUrl(track.id, trial.word, trial.voice));
+    const audio = new Audio(modelUrl(accent, track.id, trial));
     modelAudioRef.current = audio;
     void audio.play();
-  }, [trial, track.id]);
+  }, [trial, track.id, accent]);
 
   const playOwn = useCallback(() => {
     if (!recorder.audioUrl) return;
@@ -184,7 +192,7 @@ export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
     const blob = recorder.blob;
     void (async () => {
       try {
-        const res = await scoreAttempt(await blobToWav16kMono(blob), trial.word);
+        const res = await scoreAttempt(await blobToWav16kMono(blob), trial.word, accent);
         setResults((rs) => [...rs, toTrialResult(res, trial)]);
         setSubmitError(null);
         setStage("feedback");
@@ -194,7 +202,7 @@ export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
         resetRecorder();
       }
     })();
-  }, [stage, recorder.status, recorder.blob, trial, index, resetRecorder]);
+  }, [stage, recorder.status, recorder.blob, trial, index, resetRecorder, accent]);
 
   useEffect(() => {
     if (stage === "finished" && !savedRef.current) {
@@ -223,7 +231,7 @@ export function ProductionDrill({ track }: { track: MinimalPairTrack }) {
     savedRef.current = false;
     autoplayedRef.current = -1;
     submittedRef.current = -1;
-    setTrials(buildTrials(track, manifest.voices));
+    setTrials(buildTrials(track, manifest));
     setIndex(0);
     setResults([]);
     setSubmitError(null);
