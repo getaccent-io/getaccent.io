@@ -1,8 +1,66 @@
 {
   "builtAt": "2026-07-16T11:45:55.523Z",
+  "works": [
+    {
+      "id": "psalms",
+      "collection": "bible",
+      "title": "Psalms",
+      "source": "World English Bible",
+      "passageIds": [
+        "psalm-23",
+        "psalm-121"
+      ]
+    },
+    {
+      "id": "john",
+      "collection": "bible",
+      "title": "Gospel of John",
+      "source": "World English Bible",
+      "passageIds": [
+        "john-1"
+      ]
+    },
+    {
+      "id": "1-corinthians",
+      "collection": "bible",
+      "title": "1 Corinthians",
+      "source": "World English Bible",
+      "passageIds": [
+        "1-corinthians-13"
+      ]
+    },
+    {
+      "id": "philippians",
+      "collection": "bible",
+      "title": "Philippians",
+      "source": "World English Bible",
+      "passageIds": [
+        "philippians-4"
+      ]
+    },
+    {
+      "id": "north-wind",
+      "collection": "classics",
+      "title": "The North Wind and the Sun",
+      "source": "Aesop's Fables",
+      "passageIds": [
+        "north-wind"
+      ]
+    },
+    {
+      "id": "gettysburg",
+      "collection": "classics",
+      "title": "The Gettysburg Address",
+      "source": "Abraham Lincoln, 1863",
+      "passageIds": [
+        "gettysburg"
+      ]
+    }
+  ],
   "passages": [
     {
       "id": "psalm-23",
+      "workId": "psalms",
       "collection": "bible",
       "title": "Psalm 23",
       "source": "World English Bible",
@@ -22,6 +80,7 @@
     },
     {
       "id": "psalm-121",
+      "workId": "psalms",
       "collection": "bible",
       "title": "Psalm 121",
       "source": "World English Bible",
@@ -42,6 +101,7 @@
     },
     {
       "id": "john-1",
+      "workId": "john",
       "collection": "bible",
       "title": "John 1:1–14",
       "source": "World English Bible",
@@ -66,6 +126,7 @@
     },
     {
       "id": "1-corinthians-13",
+      "workId": "1-corinthians",
       "collection": "bible",
       "title": "1 Corinthians 13",
       "source": "World English Bible",
@@ -95,6 +156,7 @@
     },
     {
       "id": "philippians-4",
+      "workId": "philippians",
       "collection": "bible",
       "title": "Philippians 4:4–13",
       "source": "World English Bible",
@@ -119,6 +181,7 @@
     },
     {
       "id": "north-wind",
+      "workId": "north-wind",
       "collection": "classics",
       "title": "The North Wind and the Sun",
       "source": "Aesop's Fables",
@@ -133,6 +196,7 @@
     },
     {
       "id": "gettysburg",
+      "workId": "gettysburg",
       "collection": "classics",
       "title": "The Gettysburg Address",
       "source": "Abraham Lincoln, 1863",

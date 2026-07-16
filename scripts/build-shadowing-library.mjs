@@ -17,16 +17,25 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 
+// Hierarchy: collection → work → passage. `work`/`workTitle` group passages
+// under a source (a Bible book, a story, a speech); a work with one passage
+// collapses straight to the player in the UI. Optional facets travel with the
+// passage, not the tree: `license` is an attribution notice that MUST be shown
+// wherever the text/audio appears (e.g. "Comma Gets a Cure"); `difficulty` is
+// "beginner" | "intermediate" | "advanced".
+//
 // ref = bible-api.com reference (WEB translation); text = inline source.
 const SPEC = [
-  { id: "psalm-23", collection: "bible", title: "Psalm 23", source: "World English Bible", ref: "psalms 23" },
-  { id: "psalm-121", collection: "bible", title: "Psalm 121", source: "World English Bible", ref: "psalms 121" },
-  { id: "john-1", collection: "bible", title: "John 1:1–14", source: "World English Bible", ref: "john 1:1-14" },
-  { id: "1-corinthians-13", collection: "bible", title: "1 Corinthians 13", source: "World English Bible", ref: "1 corinthians 13" },
-  { id: "philippians-4", collection: "bible", title: "Philippians 4:4–13", source: "World English Bible", ref: "philippians 4:4-13" },
+  { id: "psalm-23", collection: "bible", work: "psalms", workTitle: "Psalms", title: "Psalm 23", source: "World English Bible", ref: "psalms 23" },
+  { id: "psalm-121", collection: "bible", work: "psalms", workTitle: "Psalms", title: "Psalm 121", source: "World English Bible", ref: "psalms 121" },
+  { id: "john-1", collection: "bible", work: "john", workTitle: "Gospel of John", title: "John 1:1–14", source: "World English Bible", ref: "john 1:1-14" },
+  { id: "1-corinthians-13", collection: "bible", work: "1-corinthians", workTitle: "1 Corinthians", title: "1 Corinthians 13", source: "World English Bible", ref: "1 corinthians 13" },
+  { id: "philippians-4", collection: "bible", work: "philippians", workTitle: "Philippians", title: "Philippians 4:4–13", source: "World English Bible", ref: "philippians 4:4-13" },
   {
     id: "north-wind",
     collection: "classics",
+    work: "north-wind",
+    workTitle: "The North Wind and the Sun",
     title: "The North Wind and the Sun",
     source: "Aesop's Fables",
     text:
@@ -39,6 +48,8 @@ const SPEC = [
   {
     id: "gettysburg",
     collection: "classics",
+    work: "gettysburg",
+    workTitle: "The Gettysburg Address",
     title: "The Gettysburg Address",
     source: "Abraham Lincoln, 1863",
     text:
@@ -86,22 +97,37 @@ function toSentences(text) {
 }
 
 const passages = [];
+// Works, in first-seen order; each collects the ids of its passages.
+const works = [];
+const workById = new Map();
 for (const spec of SPEC) {
   const text = spec.text ?? (await fetchWebText(spec.ref));
   const sentences = toSentences(text);
   passages.push({
     id: spec.id,
+    workId: spec.work,
     collection: spec.collection,
     title: spec.title,
     source: spec.source,
     sentences,
+    ...(spec.license ? { license: spec.license } : {}),
+    ...(spec.difficulty ? { difficulty: spec.difficulty } : {}),
   });
+  let work = workById.get(spec.work);
+  if (!work) {
+    work = { id: spec.work, collection: spec.collection, title: spec.workTitle, source: spec.source, passageIds: [] };
+    workById.set(spec.work, work);
+    works.push(work);
+  }
+  work.passageIds.push(spec.id);
   const words = text.split(/\s+/).length;
   console.log(`${spec.id}: ${sentences.length} sentences, ${words} words`);
 }
 
 writeFileSync(
   join(root, "src", "constants", "shadowingLibrary.json"),
-  JSON.stringify({ builtAt: new Date().toISOString(), passages }, null, 2) + "\n",
+  JSON.stringify({ builtAt: new Date().toISOString(), works, passages }, null, 2) + "\n",
 );
-console.log(`\n${passages.length} passages written to src/constants/shadowingLibrary.json`);
+console.log(
+  `\n${passages.length} passages across ${works.length} works written to src/constants/shadowingLibrary.json`,
+);

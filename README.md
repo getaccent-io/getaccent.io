@@ -50,9 +50,14 @@ Phase 2 so far:
   The generator (`npm run gen:hvpt -- --accent us|uk`) is provider-pluggable
   — ElevenLabs, Azure, Google Chirp, or macOS `say` — and the app only reads
   the manifest + file layout, so switching voices never touches app code.
-- `/shadowing`: the main practice loop — pick a book (Bible in the
-  public-domain WEB translation, Classics), then a passage from its
-  contents (library baked into `src/constants/shadowingLibrary.json`).
+- `/shadowing`: the main practice loop — collection → work → passage
+  (`/shadowing/[collection]/[work]/[passage]`). Pick a collection (Bible in
+  the public-domain WEB translation, Classics), then a work (a Bible book, a
+  story, a speech), then a passage. A work with one passage collapses
+  straight to the player; a multi-passage work (e.g. Psalms) shows a
+  contents page first. Passages carry optional facets (`license` attribution,
+  `difficulty`) that annotate rather than nest. Library baked into
+  `src/constants/shadowingLibrary.json`.
   The player reads the passage through once, then sentence-by-sentence
   with timed gaps to shadow out loud. Pause / replay / back / next, 0.85×
   slow toggle, resume position per passage. Audio is pre-generated per

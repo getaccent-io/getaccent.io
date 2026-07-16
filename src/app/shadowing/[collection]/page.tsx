@@ -31,8 +31,8 @@ export default async function ShadowingCollectionPage({
           </h1>
         </div>
         <p className="mb-6 text-sm leading-relaxed text-neutral-600">
-          Pick a passage. Your position saves as you go — coming back to the same passage
-          beats starting a new one.
+          Pick a book or passage. Your position saves as you go — coming back to the same
+          passage beats starting a new one.
         </p>
         <ShadowLibrary collection={collection.id} />
       </div>

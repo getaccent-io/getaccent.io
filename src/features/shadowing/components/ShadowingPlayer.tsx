@@ -62,7 +62,15 @@ function summarize(results: Record<number, SentenceScore>, total: number) {
   };
 }
 
-export function ShadowingPlayer({ passage }: { passage: ShadowPassage }) {
+export function ShadowingPlayer({
+  passage,
+  backHref = `/shadowing/${passage.collection}`,
+  backLabel = "All passages",
+}: {
+  passage: ShadowPassage;
+  backHref?: string;
+  backLabel?: string;
+}) {
   const accent = useAccent();
   const {
     micReady,
@@ -295,6 +303,9 @@ export function ShadowingPlayer({ passage }: { passage: ShadowPassage }) {
             {passage.source} · {total} sentences · ~{estimateMinutes(total)} min · voice:{" "}
             {voiceLabel(manifest.voice)}
           </p>
+          {passage.license ? (
+            <p className="mt-1 text-xs text-neutral-400">{passage.license}</p>
+          ) : null}
         </div>
         <p className="max-w-md text-sm leading-relaxed text-neutral-600">
           First you&apos;ll hear the whole passage while you read along. Then it plays one
@@ -450,10 +461,10 @@ export function ShadowingPlayer({ passage }: { passage: ShadowPassage }) {
             Practice again
           </button>
           <Link
-            href={`/shadowing/${passage.collection}`}
+            href={backHref}
             className="rounded-full border border-neutral-300 px-6 py-2.5 text-sm font-medium text-neutral-700 hover:bg-neutral-100"
           >
-            All passages
+            {backLabel}
           </Link>
         </div>
       </div>
